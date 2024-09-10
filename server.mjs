@@ -73,23 +73,60 @@ app.post("/api/send-email", async (req, res) => {
     Delivery City: ${deliverycity}
     City of Departure: ${departurecity}
     Freight Type: ${ftype}
-    Incoterms: ${incoterms}
     Weight: ${weight}
     Height: ${height}
     Width: ${width}
     Length: ${length}
-    Delivery Type: ${deliverytype ? "Fragile" : "Regular"}
+    Fragile: ${deliverytype ? "Yes" : "No"}
     Express Delivery: ${deliveryexpress ? "Yes" : "No"}
-    Packaging: ${optname}
+    Packaging: ${optname ? "Yes" : "No"}
   `;
 
   try {
-    await sendEmail(email, subject, text);
+    await sendEmail(
+      "quotation@day2daylogistics.co.uk", // Recipient (static)
+      subject, // Subject of the email
+      name, // Name of the requester
+      email, // Sender's email
+      phone, // Phone number
+      deliverycity, // Delivery city
+      departurecity, // City of departure
+      ftype, // Freight type
+      weight, // Weight
+      height, // Height
+      width, // Width
+      length, // Length
+      deliverytype, // Fragile or not (boolean)
+      deliveryexpress, // Express delivery or not (boolean)
+      optname // Packaging or not (boolean)
+    );
     res.status(200).json({ message: "Email sent successfully" });
   } catch (error) {
     res
       .status(500)
       .json({ error: "Error sending email", details: error.message });
+  }
+});
+
+app.post("/api/contact", async (req, res) => {
+  const { name, email, phone, subject, message } = req.body;
+
+  // Construct the email content
+  const emailContent = `
+    Name: ${name}
+    Email: ${email}
+    Phone: ${phone}
+    Subject: ${subject}
+    Message: ${message}
+  `;
+
+  try {
+    // Send the email using the sendEmail function
+    await sendEmail("quotation@day2daylogistics.co.uk", subject, emailContent); // Change recipient email here
+    res.status(200).json({ message: "Email sent successfully!" });
+  } catch (error) {
+    console.error("Error sending email:", error);
+    res.status(500).json({ error: "Failed to send email." });
   }
 });
 
