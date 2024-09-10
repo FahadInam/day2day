@@ -4,6 +4,7 @@ import cors from "cors";
 import { sendEmail } from "./emailService.mjs";
 import signupRouter from "./signup.mjs";
 import signinRouter from "./signin.mjs";
+import { sendContactEmail } from "./contactEmailService.mjs";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -122,7 +123,11 @@ app.post("/api/contact", async (req, res) => {
 
   try {
     // Send the email using the sendEmail function
-    await sendEmail("quotation@day2daylogistics.co.uk", subject, emailContent); // Change recipient email here
+    await sendContactEmail(
+      "quotation@day2daylogistics.co.uk",
+      subject,
+      emailContent
+    ); // Change recipient email here
     res.status(200).json({ message: "Email sent successfully!" });
   } catch (error) {
     console.error("Error sending email:", error);
